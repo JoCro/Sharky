@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: world.class.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: world.class.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>class World {
+    character = new Character();
+    level = level1;
+    canvas;
+    ctx;
+    keyboard;
+    camera_x = 0;
+    statusBar = new Statusbar();
+    coinBar = new StatusbarCoin();
+    poisonBar = new StatusbarPoison();
+    enemyBar = new StatusbarEnemy();
+    throwableObjects = [];
+    bottle_sound = new Audio('sounds/bottle_collected.mp3');
+    background_music = new Audio('sounds/background_music.mp3');
+    
+    /**
+    * Constructs an instance of the class, initializing the canvas context, keyboard input and starts drawing, world setup and game loop. Also sets the background music volume and starts playback.
+    * 
+    * @param {HTMLCanvasElement} canvas - the canvas element to draw on.
+    * @param {keyboard} keyboard - The keyboard input handler for player controls
+    */
+    constructor(canvas, keyboard){
+        this.ctx = canvas.getContext('2d');
+        this.canvas = canvas;
+        this.keyboard = keyboard;
+        this.draw();
+        this.setWorld();
+        this.run();
+        this.background_music.volume = 0.15;
+        this.playBackgroundMusic(); 
+    }
+    
+    /**
+    * This function assigns the current `world` instance (i.e., `this`) to the `world` property of the `character` object. This establishes a reference that allows the character to access and interact with properties and methods within the current world context
+    *  
+    */
+    setWorld(){
+        this.character.world = this;  
+    }
+    
+    /**
+    * This function creates stoppableIntervals, which executes the checkCollisions and checkThrowObjects functions.
+    */
+    run(){
+        setStoppableInterval(this.checkCollisions.bind(this), 200);
+        setStoppableInterval(this.checkThrowObjects.bind(this),200);
+    }
+    
+    /**
+    * This function checks, if the keyboard.D-variable is true and that the characters bottle-status isnt 0 and that the character doesnt look to the left. If these conditions are true, a bottle is created an thrown. The bottleStatus will also be decreased
+    */
+    checkThrowObjects(){
+        if(this.keyboard.D &amp;&amp; this.character.bottleStatus !== 0 &amp;&amp; this.character.otherDirection == false){
+            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
+            this.throwableObjects.push(bottle);
+            this.decreaseBottleStatus();
+        }
+    }
+    
+    /**
+    * This function executes functions to determine, if any collisions are happening.
+    */
+    checkCollisions(){
+        this.checkEnemyCollisions();
+        this.checkCollectableCollisions();
+        this.checkAttackCollision();
+    }
+    
+    /**
+    * This function handles the case and executes its needed functions, that the character collides with an enemy and isn't either attacking, hurt or dead
+    */
+    checkEnemyCollisions(){
+        this.level.enemies.forEach((enemy) => { 
+            if (this.character.isColliding(enemy) &amp;&amp; !this.keyboard.V &amp;&amp; !enemy.isDead &amp;&amp; !this.character.isHurt()){
+                this.character.hit();
+                this.character.sharky_hurt_sound.play();
+                this.statusBar.setPercentage(this.character.energy);
+            }
+        })
+    }
+    
+    /**
+    * This function checks, if the character collides with an collectable Object and executes functions to handle this case.
+    */
+    checkCollectableCollisions(){
+        let coinsToRemove = [];
+        this.level.collectableObjects.forEach((coin) => {
+            if (this.character.isColliding(coin)) {
+                this.handleCaseOfCollectableCollision(coin);
+                coinsToRemove.push(coin);
+            }
+        });
+        this.level.collectableObjects = this.level.collectableObjects.filter(coin => !coinsToRemove.includes(coin));
+    }
+    
+    /**
+    * This function checks each case the character can collide with an collectable object and executes functions to handle each of the possible cases.
+    * 
+    * @param {object} coin - an collectableObject from the movable-object-class 
+    */
+    handleCaseOfCollectableCollision(coin){
+        if (this.coinBarIsNotHundred &amp;&amp; this.collectedCoin(coin))  {
+            this.updateTheCoinBarStatus(coin);
+        } else if(!this.coinBarIsNotHundred &amp;&amp; this.collectedCoin(coin)){
+            this.character.coinStatus = 100;
+        }else if(this.poisonBarIsNotHundred &amp;&amp; !this.collectedCoin(coin)){
+            this.updateTheBottleStauts();
+        }else if(!this.poisonBarIsNotHundred &amp;&amp; !this.collectedCoin(coin)){
+            this.character.bottleStatus = 100;
+        }
+    }
+    
+    /**
+    * This function executes functions, to increase the bottleStatus and the statusBar, when its not already full
+    */
+    updateTheBottleStauts(){
+        this.increaseBottleStatus();
+        if(this.poisonBarIsNotFull){
+            this.increaseBottleStatusBar();
+            this.bottle_sound.play();
+        }
+    }
+    
+    /**
+    * This function executes functions, to increase the coinStatus and the coinBar, when its not already full
+    * 
+    * @param {object} coin - an entity which is an extension of the movable-object-class
+    */
+    updateTheCoinBarStatus(coin){
+        this.increaseCoinStatus();
+        if (this.coinBarIsNotFull) {
+            this.increaseCoinStatusBar();
+            coin.coin_sound.play();
+        }
+    }
+    
+    /**
+    * This function checks, if the entity which collided with the character, is acutally a coin
+    * 
+    * @param {object} coin - an entity of the movable-object-class which can collide with the character 
+    * @returns {boolean} - returns true, when the entity is an instance of the coin-class
+    */
+    collectedCoin(coin){
+        return coin instanceof Coin;
+    }
+    
+    /**
+    * This function passes the coinStatus of the character to the setPercentage-function of the coinBar and executes it.
+    */
+    increaseCoinStatusBar(){
+        this.coinBar.setPercentage(this.character.coinStatus);
+    }
+    
+    /**
+    * This function increases the characters coinStatus by 20. It also ensures, that the status can't be over 100 by using math.min
+    */
+    increaseCoinStatus(){
+        this.character.coinStatus = Math.min(this.character.coinStatus + 20, 100);
+    }
+    
+    /**
+    * This function passes the bottleStatus of the character to the setPercentage-funciton of the poisonBar and executes it.
+    */
+    increaseBottleStatusBar(){
+        this.poisonBar.setPercentage(this.character.bottleStatus);
+    }
+    
+    /**
+    * This function increases the characters bottleStatus by 20. It also ensures, that the status can't be over 100 by using math.min
+    */
+    increaseBottleStatus(){
+        this.character.bottleStatus = Math.min(this.character.bottleStatus + 20, 100);
+    }
+    
+    /**
+    * This function decreases the characters bottleStatus by 20 while its over 0 and executes the increaseBottleStatusBar-function
+    */
+    decreaseBottleStatus(){
+        if(this.character.bottleStatus > 0){
+            this.character.bottleStatus -= 20;
+            this.increaseBottleStatusBar();
+        }
+    }
+    
+    /**
+    * This function checks, if the coinStatus is not over 100
+    * 
+    * @returns {boolean} - returns true, if the characters coinStatus is equal to or less than 100;
+    */
+    coinBarIsNotFull(){
+        return this.character.coinStatus &lt;= 100;  
+    }
+    
+    /**
+    * This function checks, if the coinStatus in not full
+    * 
+    * @returns {boolean} - returns true, if the characters coinStatus is not 100 and is under 101;
+    */
+    coinBarIsNotHundred(){
+        return this.character.coinStatus != 100 &amp;&amp; this.character.coinStatus &lt; 101;
+    }
+    
+    /**
+    * This function checks, if the characters bottleStatus is not 100
+    * 
+    * @returns {boolean} - returns true, if the characters bottleStatus is equal to or less than 100;
+    */
+    poisonBarIsNotFull(){
+        return this.character.bottleStatus &lt;= 100;
+    }
+    
+    /**
+    * This function checks, if the bottleStatus is not full
+    * 
+    * @returns {boolean} - returns true, if the characters bottleStatus is not 100 and is under 101;
+    */
+    poisonBarIsNotHundred(){
+        return this.character.bottleStatus != 100 &amp;&amp; this.character.bottleStatus &lt; 101;
+    }
+    
+    /**
+    * This function clears the canvas and draws everything the game needs on it.
+    */
+    draw(){
+        this.ctx.clearRect(0,0, this.canvas.width, this.canvas.height);
+        this.ctx.translate(this.camera_x, 0);
+        this.addObjectsToMap(this.level.backgroundObjects);
+        this.ctx.translate(-this.camera_x,0);
+        this.setUpFixedObj();
+        this.ctx.translate(this.camera_x,0); 
+        this.addToMap(this.character);
+        this.addAllObjToMap();
+        this.ctx.translate(-this.camera_x, 0);
+        let self = this;
+        this.drawAsMuchAsYouCan(self);
+    }
+    
+    /**
+    * * This function uses `requestAnimationFrame` to repeatedly call the `draw` method on the provided `self` object, allowing for continuous rendering of the entity. The drawing will only occur if the game has not ended
+    *  
+    * 
+    * @param {object} self - the object, which calls the draw-function, itself 
+    */
+    drawAsMuchAsYouCan(self){
+        requestAnimationFrame(function(){
+            if(gameEnded == false){
+                self.draw();  
+            }
+        });
+    }
+    
+    /**
+    * This function calls all functions that are needed to add all dynamic objects to the map.
+    */
+    addAllObjToMap(){
+        this.addObjectsToMap(this.level.enemies);
+        this.addObjectsToMap(this.throwableObjects); 
+        this.addObjectsToMap(this.level.collectableObjects);
+    }
+    
+    /**
+    * This function calls all functions that are needed to add all fixed Objects to the map. Fixed objects cant move
+    */
+    setUpFixedObj(){
+        this.addToMap(this.statusBar);
+        this.addToMap(this.coinBar);
+        this.addToMap(this.poisonBar);
+        this.addToMap(this.enemyBar);
+    }
+    
+    /**
+    * This function executes the addToMap-function for  all given objects (parameter).
+    * 
+    * @param {object} objects - an object which is given by the function which executes this funcion.
+    */
+    addObjectsToMap(objects){
+        objects.forEach(o =>{
+            this.addToMap(o);
+        });
+    }
+    
+    /**
+    * Adds a movable object (mo) to the map by drawing it and handling its direction.
+    * 
+    * @param {object} mo - the movable object to be added to the map. 
+    */
+    addToMap(mo){
+        if(mo.otherDirection){
+            this.flipImage(mo);
+        }
+        mo.draw(this.ctx);
+        mo.drawFrame(this.ctx);
+        if(mo.otherDirection){
+            this.flipImageBack(mo);
+        }
+    }
+    
+    /**
+    * This function flips the images of an object
+    * 
+    * @param {object} mo - the movable object whose images are to be flipped
+    */
+    flipImage(mo){
+        this.ctx.save();
+        this.ctx.translate(mo.width, 0);
+        this.ctx.scale(-1, 1);
+        mo.x = mo.x * -1;
+    }
+    
+    /**
+    * This function flips the images of an object back to the default mode.
+    * 
+    * @param {object} mo - the movable object whose images are to be flipped back. 
+    */
+    flipImageBack(mo){
+        mo.x = mo.x * -1;
+        this.ctx.restore();
+    }
+    
+    /**
+    * This function calls another one that is needed, when the character attacks and collides an enemy while Attacking.
+    */
+    checkAttackCollision(){
+        this.level.enemies.forEach((enemy) => { 
+            if (this.keyboard.V &amp;&amp; this.character.isColliding(enemy)){
+                enemy.slappedSound.play();
+                this.handleCaseOfCollisionWhileAttacking(enemy);
+            }
+        })
+    }
+    
+    /**
+    * This funcion checks, if the character hits a normal enemy or the endboss and executes the needed functions for the given situation.
+    * 
+    * @param {object} enemy 
+    */
+    handleCaseOfCollisionWhileAttacking(enemy){
+        if(enemy instanceof Endboss &amp;&amp; !enemy.isHurt()){
+            enemy.wasHurt();
+            if(enemy.energy >0){
+                enemy.hit();
+                this.enemyBar.setPercentage(enemy.energy);
+            }
+        }else if(enemy.energy == 0){
+            enemy.isDead =  true;
+        }else{
+            if(enemy instanceof Endboss){
+            }else {
+                enemy.isDead = true;
+            }
+        }
+    }
+    
+    /**
+    * This function plays the background-music
+    */
+    playBackgroundMusic(){
+        this.background_music.play();
+    }  
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="Bottle.html">Bottle</a></li><li><a href="Character.html">Character</a></li><li><a href="Coin.html">Coin</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="Jellyfisch.html">Jellyfisch</a></li><li><a href="Level.html">Level</a></li><li><a href="Pufferfish.html">Pufferfish</a></li><li><a href="Statusbar.html">Statusbar</a></li><li><a href="StatusbarCoin.html">StatusbarCoin</a></li><li><a href="StatusbarEnemy.html">StatusbarEnemy</a></li><li><a href="StatusbarPoison.html">StatusbarPoison</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sat Nov 16 2024 23:17:20 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

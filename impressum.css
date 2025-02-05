@@ -1,0 +1,62 @@
+body{
+    margin: 0;
+    background: url('img/body_bg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow-x: hidden;
+    font-family: 'Luckiest Guy';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    
+}
+
+body a{
+    color: rgba(230, 251, 112, 1);
+    text-decoration: none;
+
+}
+
+h1{
+    color: rgba(230, 251, 112, 1);
+
+}
+
+.homeButtonDiv{
+    background: linear-gradient(to bottom right,rgb(182, 235, 24),rgb(80, 237, 239));
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+  
+}
+
+
+
+.homeButtonDiv:hover{
+    cursor: pointer;
+}
+
+.homeButtonDiv img{
+    width: 20px;
+    height: 20px;
+}
+
+body a:hover{
+
+    cursor: pointer;
+}
+
+p{
+    font-size: 20px;
+}
+
+.impressum{
+    margin-left: 10px;
+    max-width: 1920px;
+    margin-top: 20px;
+    display: flex;
+}

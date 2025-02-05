@@ -1,0 +1,158 @@
+class MovableObject extends DrawableObject{
+    
+    speed = 0.15;
+    otherDirection = false;
+    speedY = 0;
+    acceleration = 2.5;
+    energy = 100;
+    lastHit = 0;
+    coinStatus = 0;
+    bottleStatus = 0;
+    slappedSound = new Audio('sounds/slap_sound.mp3');
+    gameLoseSound = new Audio('sounds/gameLose.mp3');
+    gameWinSound = new Audio('sounds/gameWon.mp3');
+    
+    /**
+    * This function sets an interval which checks if the isAboveGround-function, which checks, if the object is above the ground, returns true or if the object's speed in the y coordiante is greater than 0. In either case, the function will reduce the objects y-coordinate by its speedY, which will be reduced too by the acceleration of the object.
+    */
+    applyGravity(){
+        setInterval(() =>{
+            if(this.isAboveGround() || this.speedY > 0){
+                this.y -= this.speedY;
+                this.speedY -= this.acceleration;
+            }    
+        }, 1000 / 25);
+    }
+    
+    /**
+    * 
+    * @returns {boolean} - returns true when the entity is an instance of ThrowableObject or its y coordinate is less than 320
+    */
+    isAboveGround(){
+        if(this instanceof ThrowableObject){ 
+            return true;
+        }else {
+            return this.y < 320;
+        }
+    }
+    
+    /**
+    * This function checks, if the current entity is colliding with another entity based on their positions and offsets.
+    * 
+    * @param {object} mo - an entity of the movable-object-class 
+    * @returns {boolean} - Returns `true` if there is a collision between the current entity and the given entity `mo`,taking into account their positions, dimensions, and collision offsets. Returns `false` if there is no collision. 
+    *                      
+    *                      
+    */
+    isColliding(mo) {
+        return  this.x + this.width - this.offset.right > mo.x + mo.offset.right && 
+        this.y + this.height - this.offset.bottom > mo.y + mo.offset.top && 
+        this.x + this.offset.left < mo.x + mo.width - mo.offset.right && 
+        this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
+    }
+    
+    /**
+    * This function reduces the energy of the current entity by 20 and checks afterwards, if the entity is ded. If it's dead, the endGame-function is executed, and the game status, whether it was won or lost from the character's perspective, is passed as a parameter. If it's still alive, the current timeStamp is passed as the new value of the lastHit-variable.
+    */
+    hit(){
+        this.energy -= 20;
+        if(this.energy <= 0){
+            this.energy = 0;
+            if(world.character.energy == 0){
+                this.sharkyLostTheGame(); 
+            }else{
+                this.sharkyWonTheGame();
+            } 
+        } else{
+            this.lastHit = new Date().getTime();
+        }
+    }
+    
+    /**
+    * This function sets a timeOut of 2000ms, so the characters death is animated before the endscreen is displayed
+    */
+    sharkyLostTheGame(){
+        this.gameLoseSound.play();
+        setTimeout(() => {
+            endGame('losingFont');
+        }, 2000);
+    }
+    
+    /**
+    * this function sets a timeout of 2000ms, so the endboss' death is animated before the endscreen is displayed
+    */
+    sharkyWonTheGame(){
+        this.gameWinSound.play();
+        world.level.enemies[6].playDeadAnimation();
+        setTimeout(() => {
+            endGame('winningFont');
+        }, 2000);
+    }
+    
+    /**
+    * This function checks, if the entity was hurt in the last second, so it cant be hurt again in this time-span.
+    * 
+    * @returns {boolean} - returns true, if the value of the timepassed-variable, which is the current timeStamp reduced by the timeStamp of the lastHit-variable and divided by 1000 afterwards, is less than 1.
+    */
+    isHurt(){
+        let timepassed = new Date().getTime() - this.lastHit; // Differece in ms
+        timepassed = timepassed / 1000; //Difference in sec 
+        return timepassed < 1;
+    }
+    
+    /**
+    * This function checks, if the entity is dead
+    * 
+    * @returns {boolean} - returns true, if the entity's energy is exactly 0;
+    */
+    hasDied(){
+        return this.energy == 0;
+    }
+    
+    /**
+    * This function plays an animation by cycling through an array of image paths and updating the current image of the entity
+    * 
+    * @param {Array} images - an array of images given by the functions that executes this function.  
+    */
+    playAnimation(images){
+        let i = this.currentImage % images.length;
+        let path = images[i];
+        this.img = this.imageCache[path];
+        this.currentImage ++
+    }
+    
+    /**
+    * This function increases the x-coordinate of the entity by its own speed, so it looks like the entity would move to the right.
+    */
+    moveRight(){
+        this.x += this.speed;
+    }
+    
+    /**
+    * This function reduces the entity's x-coordinate by its own speed, so it looks like the entity would move to the left.
+    */
+    moveLeft(){
+        this.x -= this.speed; 
+    }
+    
+    /**
+    * This function reduces the entity's y-coordinate by its own speed, so it looks like the entity would move up.
+    */
+    moveUp(){
+        this.y -= this.speed;
+    }
+    
+    /**
+    * This function increases the entity's y-coordinate by its own speed, so it looks like the entity would move down.
+    */
+    moveDown(){
+        this.y += this.speed;
+    }
+    
+    /**
+    * This function sets the value of the speedY-variable to 10, so it looks like the entity would jump
+    */
+    jump(){
+        this.speedY = 10;
+    }
+}
