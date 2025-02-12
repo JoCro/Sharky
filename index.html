@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>El Pollo Loco</title>
-    <link rel="icon" type="image/x-icon" href="./img/1.Sharkie/1.IDLE/1.png">
-    <link rel="stylesheet" href="style.css"> 
-    <link rel="stylesheet" href="font.css">
+    <link rel="icon" type="image/x-icon" href="./img/1.Sharkie/1.IDLE/1.png" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="font.css" />
     <script src="./models/drawable-object.class.js"></script>
-  
+
     <script src="./models/statusbar.class.js"></script>
     <script src="./models/statusbar-coin.class.js"></script>
     <script src="./models/world.class.js"></script>
@@ -26,143 +26,188 @@
     <script src="./models/bottle.class.js"></script>
     <script src="./models/endboss.class.js"></script>
     <script src="./models/throwable-object.class.js"></script>
-    
-    
+
     <script src="./levels/level1.js"></script>
-    
+
     <script src="./js/game.js"></script>
-    
-</head>
-<body>
-    
-    
+  </head>
+  <body>
     <div class="wholeScreen" id="wholeScreen">
-        
-        <h1>El pollo loco</h1>
-        <div class="canvasDIV">
-            <canvas id="canvas" width="720px" height="480px">
-            </canvas> 
-            
-            
+      <h1>El pollo loco</h1>
+      <div class="canvasDIV">
+        <canvas id="canvas" width="720px" height="480px"> </canvas>
 
-            <div class="mobileButtons none" id="mobileButtons">
-                
-                <div class="leftMobileButtons">
-                    <button class="mobileControlBtn" id="mobileBtnLeft"><</button>
-                    <button class="mobileControlBtn" id="mobileButtonRight">></button>
-                </div>
-                
-                <div class="rightMobileButtons">
-                    <button class="mobileControlBtn" id="mobileButtonJump">^</button>
-                    <button class="mobileControlBtn" id="mobileButtonThrow">D</button>
-                    <button class="mobileControlBtn" id="mobileButtonAttack">V</button> 
-                    
-                </div>
-                
-                
-                
-            </div>
-            
-                
-            
-            
-        </div>
-        
-        
-        <img id="mobileSoundButton" src="./img/volumeMute.svg" onclick="stopSounds()" class="muteButtonMobile">
-        
-        <div class="rotate-device">
-            <div class="icon">
-                🔄
-            </div>
-            <p>Please turn your device</p>
-        </div>
-        
-        <div id="endScreenButtons" class="endScreenButtons none">
-            <button onclick="restartTheGame()" class="ctrl-btn">Restart</button>
-            <button onclick="goBackToHome()" class="ctrl-btn">Exit</button>
-        </div>
-        
-        
-        
-        
-        <div class="controllerLine" id="controllerLine">
-            <p id="controllerInfo" class="controllerInfo">Space=Swim, D=Throw Bottle, V=Melee Attack, Arrows=Direction</p>
-           
-            
-        </div>
-        
-        <div id="menu" class="menuClass">
-            
-            <div id="controlElements" class="controlElements none">
-                <button onclick="switchStartScreen()" class="ctrl-btn">Home</button>
-                <button onclick="startGame()" class="ctrl-btn">Start</button>
-                <button onclick="toggleLoreContainer('settingContainer')"  class="ctrl-btn">Settings</button>
-            </div>
-            
-            <div id="homeScreen" class="homeScreen">
-                <div id="welcomeTitle" class="welcomeTitle">
-                    <h1>Welcome to Adventures of Sharkie!</h1> 
-                    
-                    <h3>
-                        Dive into a thrilling underwater world and join Sharkie on an epic adventure! Swim through colorful coral reefs, explore mysterious shipwrecks, and overcome dangerous obstacles
-                        in this exciting jump & run journey. Collect treasures, outsmart tricky enemies, and discover hidden secrets beneath the ocean waves.
-                    </h3> 
-                </div>
-                <div id="homescreenPics" class="homescreenPics">
-                    <img class="sharkieHomescreen" src="img/1.Sharkie/1.IDLE/1.png" draggable="false">
-                    
-                </div>
-                <div id="homescreenButtons" class="homescreenButtons">
-                    <button onclick="switchStartScreen()" class="ctrl-btn">Go To Game</button>
-                    <button onclick="toggleLoreContainer('loreContainer')"class="ctrl-btn">Lore</button>
-                </div>
-                
-            </div>
-            
-            <div id="loreContainer" class="loreContainer   offScreen">
-                
-                <div id="loreText" class="loreText">
-                    <h2>The Lore of Sharkie</h2>
-                    <h3>
-                        <p>In the deep, sparkling waters of the coral reef lived Sharkie, a young and curious shark always up for fun and adventure. Sharkie and his older brother, Finn, were inseparable, with Finn, experienced and brave, always looking out for his reckless little brother.</p>
-                        <p> But one day, everything changed. A dangerous gang of sharks lurking in the shadows of the open ocean kidnapped Finn. No one knew exactly why they had taken him, but rumors in the reef spoke of a sinister plan. The leaders of this gang were feared for their ruthlessness, and no one dared to oppose them.
-                            For Sharkie, this was the moment to grow up. Despite the warnings from the elder sharks in the reef and his youthful recklessness, he decided to set out alone on a journey to rescue his brother. But the journey would be far from easy. Sharkie would have to explore the dangerous depths of the ocean, escape deadly traps, and face daunting challenges to discover where the gang had taken Finn.</p> 
-                            <p>As Sharkie traverses the vast seas, he faces not only external enemies but also his own insecurities. He must prove that he is no longer the carefree kid everyone thinks he is, but someone ready to take on responsibility. Along the way, Sharkie meets new friends, learns to make tough decisions, and discovers that courage often means more than just being fearless.</p> 
-                            <p> Will Sharkie be able to find Finn and free him from the clutches of the dangerous gang? Or will the young shark fail to overcome the challenges ahead? Only the currents of fate can tell where his journey will lead him...                            
-                                The seas are full of danger—but also full of adventure. Now it's up to Sharkie to show his true potential and embark on the greatest journey of his life.</p> </h3>
-                            </div>
-                            
-                            <button onclick="toggleLoreContainer('loreContainer')" id="closeLoreBtn" class="closeLoreBtn">X</button>
-                            
-                        </div>
-                        
-                        <div id="settingContainer" class="loreContainer offScreen">
-                            
-                            <button id="soundButton" class="optionButton" onclick="stopSounds()">Turn Sound off</button>
-                            
-                            
-                            <button onclick="toggleLoreContainer('settingContainer')" class="closeLoreBtn">X</button>
-                            
-                        </div>
-                        
-                    </div>
-                    
-                    <div id="winningScreen" class="winningScreen">
-                        <img id="winningFont" class="endscreenFont none" src="./img/6.Botones/Tittles/You win/Recurso 19.png">
-                        <img id="losingFont" class="endscreenFont none" src="./img/6.Botones/Tittles/Game Over/Recurso 10.png">
-                    </div>
-                    
-                </div>
+        <div class="mobileButtons none" id="mobileButtons">
+          <div class="leftMobileButtons">
+            <button class="mobileControlBtn" id="mobileBtnLeft"><</button>
+            <button class="mobileControlBtn" id="mobileButtonRight">></button>
+          </div>
 
-                <div id="noteDiv" class="noteDiv">
-                    <a href="impressum.html">Impressum</a>
-                </div>
+          <div class="rightMobileButtons">
+            <button class="mobileControlBtn" id="mobileButtonJump">^</button>
+            <button class="mobileControlBtn" id="mobileButtonThrow">D</button>
+            <button class="mobileControlBtn" id="mobileButtonAttack">V</button>
+          </div>
+        </div>
+      </div>
 
-                <div id="loading-screen" class="none">
-                    <div class="loader"></div>
-                    <p>Loading, please wait...</p>
-                </div>
-                
-            </body>
-            </html>
+      <img
+        id="mobileSoundButton"
+        src="./img/volumeOn.svg"
+        onclick="stopSounds()"
+        class="muteButtonMobile"
+      />
+
+      <div class="rotate-device">
+        <div class="icon">🔄</div>
+        <p>Please turn your device</p>
+      </div>
+
+      <div id="endScreenButtons" class="endScreenButtons none">
+        <button onclick="restartTheGame()" class="ctrl-btn">Restart</button>
+        <button onclick="goBackToHome()" class="ctrl-btn">Exit</button>
+      </div>
+
+      <div class="controllerLine" id="controllerLine">
+        <p id="controllerInfo" class="controllerInfo">
+          Space=Swim, D=Throw Bottle, V=Melee Attack, Arrows=Direction
+        </p>
+      </div>
+
+      <div id="menu" class="menuClass">
+        <div id="controlElements" class="controlElements none">
+          <button onclick="switchStartScreen()" class="ctrl-btn">Home</button>
+          <button id="startButton" onclick="startGame()" class="ctrl-btn">
+            Start
+          </button>
+          <button
+            onclick="toggleLoreContainer('settingContainer')"
+            class="ctrl-btn"
+          >
+            Settings
+          </button>
+        </div>
+
+        <div id="homeScreen" class="homeScreen">
+          <div id="welcomeTitle" class="welcomeTitle">
+            <h1>Welcome to Adventures of Sharkie!</h1>
+
+            <h3>
+              Dive into a thrilling underwater world and join Sharkie on an epic
+              adventure! Swim through colorful coral reefs, explore mysterious
+              shipwrecks, and overcome dangerous obstacles in this exciting jump
+              & run journey. Collect treasures, outsmart tricky enemies, and
+              discover hidden secrets beneath the ocean waves.
+            </h3>
+          </div>
+          <div id="homescreenPics" class="homescreenPics">
+            <img
+              class="sharkieHomescreen"
+              src="img/1.Sharkie/1.IDLE/1.png"
+              draggable="false"
+            />
+          </div>
+          <div id="homescreenButtons" class="homescreenButtons">
+            <button onclick="switchStartScreen()" class="ctrl-btn">
+              Go To Game
+            </button>
+            <button
+              onclick="toggleLoreContainer('loreContainer')"
+              class="ctrl-btn"
+            >
+              Lore
+            </button>
+          </div>
+        </div>
+
+        <div id="loreContainer" class="loreContainer offScreen">
+          <div id="loreText" class="loreText">
+            <h2>The Lore of Sharkie</h2>
+            <h3>
+              <p>
+                In the deep, sparkling waters of the coral reef lived Sharkie, a
+                young and curious shark always up for fun and adventure. Sharkie
+                and his older brother, Finn, were inseparable, with Finn,
+                experienced and brave, always looking out for his reckless
+                little brother.
+              </p>
+              <p>
+                But one day, everything changed. A dangerous gang of sharks
+                lurking in the shadows of the open ocean kidnapped Finn. No one
+                knew exactly why they had taken him, but rumors in the reef
+                spoke of a sinister plan. The leaders of this gang were feared
+                for their ruthlessness, and no one dared to oppose them. For
+                Sharkie, this was the moment to grow up. Despite the warnings
+                from the elder sharks in the reef and his youthful recklessness,
+                he decided to set out alone on a journey to rescue his brother.
+                But the journey would be far from easy. Sharkie would have to
+                explore the dangerous depths of the ocean, escape deadly traps,
+                and face daunting challenges to discover where the gang had
+                taken Finn.
+              </p>
+              <p>
+                As Sharkie traverses the vast seas, he faces not only external
+                enemies but also his own insecurities. He must prove that he is
+                no longer the carefree kid everyone thinks he is, but someone
+                ready to take on responsibility. Along the way, Sharkie meets
+                new friends, learns to make tough decisions, and discovers that
+                courage often means more than just being fearless.
+              </p>
+              <p>
+                Will Sharkie be able to find Finn and free him from the clutches
+                of the dangerous gang? Or will the young shark fail to overcome
+                the challenges ahead? Only the currents of fate can tell where
+                his journey will lead him... The seas are full of danger—but
+                also full of adventure. Now it's up to Sharkie to show his true
+                potential and embark on the greatest journey of his life.
+              </p>
+            </h3>
+          </div>
+
+          <button
+            onclick="toggleLoreContainer('loreContainer')"
+            id="closeLoreBtn"
+            class="closeLoreBtn"
+          >
+            X
+          </button>
+        </div>
+
+        <div id="settingContainer" class="loreContainer offScreen">
+          <button id="soundButton" class="optionButton" onclick="stopSounds()">
+            Turn Sound off
+          </button>
+
+          <button
+            onclick="toggleLoreContainer('settingContainer')"
+            class="closeLoreBtn"
+          >
+            X
+          </button>
+        </div>
+      </div>
+
+      <div id="winningScreen" class="winningScreen">
+        <img
+          id="winningFont"
+          class="endscreenFont none"
+          src="./img/6.Botones/Tittles/You win/Recurso 19.png"
+        />
+        <img
+          id="losingFont"
+          class="endscreenFont none"
+          src="./img/6.Botones/Tittles/Game Over/Recurso 10.png"
+        />
+      </div>
+    </div>
+
+    <div id="noteDiv" class="noteDiv">
+      <a href="impressum.html">Impressum</a>
+    </div>
+
+    <div id="loading-screen" class="none">
+      <div class="loader"></div>
+      <p>Loading, please wait...</p>
+    </div>
+  </body>
+</html>

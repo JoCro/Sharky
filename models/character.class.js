@@ -1,228 +1,252 @@
 class Character extends MovableObject {
-    
-    height = 150;
-    width = 120;
-    y = 320;
-    speed = 10;
-    currentImage;
-    isPlayingAttack; 
-    attackIsDone = false;
-    timeToGoSleep = 0;
-    sharkySleepingSound = new Audio('sounds/sharky_snoring.mp3');
-    swimming_sound = new Audio('sounds/sharky_swim.mp3');
-    sharky_hurt_sound = new Audio('sounds/sharky_hurt.mp3');
-    sharky_attack_sound = new Audio('sounds/sharky_attack.mp3');   
-    world;    
-    
-    offset = {
-        top: 70,
-        bottom: 30,
-        left: 30,
-        right: 30
+  height = 150;
+  width = 120;
+  y = 320;
+  speed = 10;
+  currentImage;
+  isPlayingAttack;
+  attackIsDone = false;
+  timeToGoSleep = 0;
+  sharkySleepingSound = new Audio("sounds/sharky_snoring.mp3");
+  swimming_sound = new Audio("sounds/sharky_swim.mp3");
+  sharky_hurt_sound = new Audio("sounds/sharky_hurt.mp3");
+  sharky_attack_sound = new Audio("sounds/sharky_attack.mp3");
+  isSwimmingSoundPlaying = false;
+  world;
+
+  offset = {
+    top: 70,
+    bottom: 30,
+    left: 30,
+    right: 30,
+  };
+
+  IMAGES_SWIMMING = [
+    "img/1.Sharkie/3.Swim/1.png",
+    "img/1.Sharkie/3.Swim/2.png",
+    "img/1.Sharkie/3.Swim/3.png",
+    "img/1.Sharkie/3.Swim/4.png",
+    "img/1.Sharkie/3.Swim/5.png",
+    "img/1.Sharkie/3.Swim/6.png",
+  ];
+
+  IMAGES_JUMPING = [
+    "img/1.Sharkie/3.Swim/1.png",
+    "img/1.Sharkie/3.Swim/2.png",
+    "img/1.Sharkie/3.Swim/3.png",
+    "img/1.Sharkie/3.Swim/4.png",
+    "img/1.Sharkie/3.Swim/5.png",
+    "img/1.Sharkie/3.Swim/6.png",
+  ];
+
+  IMAGES_DEAD = [
+    "img/1.Sharkie/6.dead/1.Poisoned/1.png",
+    "img/1.Sharkie/6.dead/1.Poisoned/2.png",
+    "img/1.Sharkie/6.dead/1.Poisoned/3.png",
+    "img/1.Sharkie/6.dead/1.Poisoned/4.png",
+    "img/1.Sharkie/6.dead/1.Poisoned/5.png",
+    "img/1.Sharkie/6.dead/1.Poisoned/6.png",
+    "img/1.Sharkie/6.dead/1.Poisoned/7.png",
+    "img/1.Sharkie/6.dead/1.Poisoned/8.png",
+    "img/1.Sharkie/6.dead/1.Poisoned/9.png",
+    "img/1.Sharkie/6.dead/1.Poisoned/10.png",
+    "img/1.Sharkie/6.dead/1.Poisoned/11.png",
+    "img/1.Sharkie/6.dead/1.Poisoned/12.png",
+  ];
+
+  IMAGES_HURT = [
+    "img/1.Sharkie/5.Hurt/1.Poisoned/1.png",
+    "img/1.Sharkie/5.Hurt/1.Poisoned/2.png",
+    "img/1.Sharkie/5.Hurt/1.Poisoned/3.png",
+    "img/1.Sharkie/5.Hurt/1.Poisoned/4.png",
+    "img/1.Sharkie/5.Hurt/1.Poisoned/5.png",
+  ];
+
+  IMAGES_ATTACK = [
+    "img/1.Sharkie/4.Attack/Fin slap/1.png",
+    "img/1.Sharkie/4.Attack/Fin slap/2.png",
+    "img/1.Sharkie/4.Attack/Fin slap/3.png",
+    "img/1.Sharkie/4.Attack/Fin slap/4.png",
+    "img/1.Sharkie/4.Attack/Fin slap/5.png",
+    "img/1.Sharkie/4.Attack/Fin slap/6.png",
+    "img/1.Sharkie/4.Attack/Fin slap/7.png",
+    "img/1.Sharkie/4.Attack/Fin slap/8.png",
+  ];
+
+  IMAGES_DOES_NOTHING = [
+    "img/1.Sharkie/1.IDLE/1.png",
+    "img/1.Sharkie/1.IDLE/2.png",
+    "img/1.Sharkie/1.IDLE/3.png",
+    "img/1.Sharkie/1.IDLE/4.png",
+    "img/1.Sharkie/1.IDLE/5.png",
+    "img/1.Sharkie/1.IDLE/6.png",
+    "img/1.Sharkie/1.IDLE/7.png",
+    "img/1.Sharkie/1.IDLE/8.png",
+    "img/1.Sharkie/1.IDLE/9.png",
+    "img/1.Sharkie/1.IDLE/10.png",
+    "img/1.Sharkie/1.IDLE/11.png",
+    "img/1.Sharkie/1.IDLE/12.png",
+    "img/1.Sharkie/1.IDLE/13.png",
+    "img/1.Sharkie/1.IDLE/14.png",
+    "img/1.Sharkie/1.IDLE/15.png",
+    "img/1.Sharkie/1.IDLE/16.png",
+    "img/1.Sharkie/1.IDLE/17.png",
+    "img/1.Sharkie/1.IDLE/18.png",
+  ];
+
+  IMAGES_SLEEPING = [
+    "img/1.Sharkie/2.Long_IDLE/I11.png",
+    "img/1.Sharkie/2.Long_IDLE/I12.png",
+    "img/1.Sharkie/2.Long_IDLE/I13.png",
+    "img/1.Sharkie/2.Long_IDLE/I14.png",
+  ];
+
+  /**
+   * Constructs an instance of the class, initializing its image, setting up animations, loading various image states and applies gravity
+   *
+   */
+  constructor() {
+    super().loadImage("./img/1.Sharkie/1.IDLE/1.png");
+    this.currentImage = 0;
+    this.loadImages(this.IMAGES_SWIMMING);
+    this.loadImages(this.IMAGES_JUMPING);
+    this.loadImages(this.IMAGES_DEAD);
+    this.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_ATTACK);
+    this.loadImages(this.IMAGES_DOES_NOTHING);
+    this.loadImages(this.IMAGES_SLEEPING);
+    this.applyGravity();
+    this.animate();
+
+    this.swimming_sound.loop = true;
+  }
+
+  /**
+   * this function executes the movecharacter and playcharacter functions with in its given frequency
+   */
+  animate() {
+    setStoppableInterval(this.moveCharacter.bind(this), 1000 / 60);
+    setStoppableInterval(this.playCharacter.bind(this), 200);
+  }
+
+  /**
+   * the function determines executes functions to check in which direction the character can move and then executes the correct move-function
+   */
+  moveCharacter() {
+    // this.swimming_sound.pause();
+    if (this.canMoveRight()) {
+      this.moveRight();
+      this.sharkySleepingSound.pause();
     }
-    
-    
-    IMAGES_SWIMMING =[
-        'img/1.Sharkie/3.Swim/1.png',
-        'img/1.Sharkie/3.Swim/2.png',
-        'img/1.Sharkie/3.Swim/3.png',
-        'img/1.Sharkie/3.Swim/4.png',
-        'img/1.Sharkie/3.Swim/5.png',
-        'img/1.Sharkie/3.Swim/6.png'
-    ];
-    
-    IMAGES_JUMPING = [
-        'img/1.Sharkie/3.Swim/1.png',
-        'img/1.Sharkie/3.Swim/2.png',
-        'img/1.Sharkie/3.Swim/3.png',
-        'img/1.Sharkie/3.Swim/4.png',
-        'img/1.Sharkie/3.Swim/5.png',
-        'img/1.Sharkie/3.Swim/6.png'
-    ];
-    
-    IMAGES_DEAD = [
-        'img/1.Sharkie/6.dead/1.Poisoned/1.png',
-        'img/1.Sharkie/6.dead/1.Poisoned/2.png',
-        'img/1.Sharkie/6.dead/1.Poisoned/3.png',
-        'img/1.Sharkie/6.dead/1.Poisoned/4.png',
-        'img/1.Sharkie/6.dead/1.Poisoned/5.png',
-        'img/1.Sharkie/6.dead/1.Poisoned/6.png',
-        'img/1.Sharkie/6.dead/1.Poisoned/7.png',
-        'img/1.Sharkie/6.dead/1.Poisoned/8.png',
-        'img/1.Sharkie/6.dead/1.Poisoned/9.png',
-        'img/1.Sharkie/6.dead/1.Poisoned/10.png',
-        'img/1.Sharkie/6.dead/1.Poisoned/11.png',
-        'img/1.Sharkie/6.dead/1.Poisoned/12.png'
-    ];
-    
-    
-    IMAGES_HURT = [
-        'img/1.Sharkie/5.Hurt/1.Poisoned/1.png',
-        'img/1.Sharkie/5.Hurt/1.Poisoned/2.png',
-        'img/1.Sharkie/5.Hurt/1.Poisoned/3.png',
-        'img/1.Sharkie/5.Hurt/1.Poisoned/4.png',
-        'img/1.Sharkie/5.Hurt/1.Poisoned/5.png'
-    ];
-    
-    IMAGES_ATTACK = [
-        'img/1.Sharkie/4.Attack/Fin slap/1.png',
-        'img/1.Sharkie/4.Attack/Fin slap/2.png',
-        'img/1.Sharkie/4.Attack/Fin slap/3.png',
-        'img/1.Sharkie/4.Attack/Fin slap/4.png',
-        'img/1.Sharkie/4.Attack/Fin slap/5.png',
-        'img/1.Sharkie/4.Attack/Fin slap/6.png',
-        'img/1.Sharkie/4.Attack/Fin slap/7.png',
-        'img/1.Sharkie/4.Attack/Fin slap/8.png'
-    ];
-    
-    IMAGES_DOES_NOTHING = [
-        'img/1.Sharkie/1.IDLE/1.png',
-        'img/1.Sharkie/1.IDLE/2.png',
-        'img/1.Sharkie/1.IDLE/3.png',
-        'img/1.Sharkie/1.IDLE/4.png',
-        'img/1.Sharkie/1.IDLE/5.png',
-        'img/1.Sharkie/1.IDLE/6.png',
-        'img/1.Sharkie/1.IDLE/7.png',
-        'img/1.Sharkie/1.IDLE/8.png',
-        'img/1.Sharkie/1.IDLE/9.png',
-        'img/1.Sharkie/1.IDLE/10.png',
-        'img/1.Sharkie/1.IDLE/11.png',
-        'img/1.Sharkie/1.IDLE/12.png',
-        'img/1.Sharkie/1.IDLE/13.png',
-        'img/1.Sharkie/1.IDLE/14.png',
-        'img/1.Sharkie/1.IDLE/15.png',
-        'img/1.Sharkie/1.IDLE/16.png',
-        'img/1.Sharkie/1.IDLE/17.png',
-        'img/1.Sharkie/1.IDLE/18.png'
-    ];
-    
-    IMAGES_SLEEPING = [
-        'img/1.Sharkie/2.Long_IDLE/I11.png',
-        'img/1.Sharkie/2.Long_IDLE/I12.png',
-        'img/1.Sharkie/2.Long_IDLE/I13.png',
-        'img/1.Sharkie/2.Long_IDLE/I14.png'
-    ];
-    
-    /**
-    * Constructs an instance of the class, initializing its image, setting up animations, loading various image states and applies gravity
-    * 
-    */
-    constructor(){
-        super().loadImage('./img/1.Sharkie/1.IDLE/1.png');
-        this.currentImage = 0;
-        this.loadImages(this.IMAGES_SWIMMING);
-        this.loadImages(this.IMAGES_JUMPING);
-        this.loadImages(this.IMAGES_DEAD);
-        this.loadImages(this.IMAGES_HURT);
-        this.loadImages(this.IMAGES_ATTACK);
-        this.loadImages(this.IMAGES_DOES_NOTHING);
-        this.loadImages(this.IMAGES_SLEEPING);
-        this.applyGravity();
-        this.animate();
+    if (this.canMoveLeft()) {
+      this.moveLeft();
+      this.sharkySleepingSound.pause();
     }
-    
-    /**
-    * this function executes the movecharacter and playcharacter functions with in its given frequency
-    */
-    animate(){
-        setStoppableInterval(this.moveCharacter.bind(this), 1000 / 60);
-        setStoppableInterval(this.playCharacter.bind(this), 200);
-    }
-    
-    /**
-    * the function determines executes functions to check in which direction the character can move and then executes the correct move-function
-    */
-    moveCharacter(){
-        this.swimming_sound.pause();
-        if(this.canMoveRight()){
-            this.moveRight();
-            this.sharkySleepingSound.pause();
-        }
-        if(this.canMoveLeft()){
-            this.moveLeft();
-            this.sharkySleepingSound.pause();
-        }
-        if(this.canJump()){
-            this.jump();
-            this.swimming_sound.play();
-        }
-        this.world.camera_x =  -this.x + 100;
-    }
-    
-    /**
-    * This function checks, if the character is able to move right
-    * 
-    *  @returns {boolean} - Returns `true` if the character is allowed to move right; otherwise, returns `false`.
-    */
-    canMoveRight(){
-        return this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x;
-    }
-    
-    /**
-    * This function checks, if the character is able to move right
-    * 
-    * @returns {boolean} - Returns 'true' if the character is allowed to move right; otherwise, returns 'false'.
-    */
-    canMoveLeft(){
-        return this.world.keyboard.LEFT && this.x > 0 ;
-    }
-    
-    /**
-    * This function executes the moveRight function from its super-class, plays the correct sound for the action and resets the sleep-timer.
-    */
-    moveRight(){
-        super.moveRight();
-        this.otherDirection = false;
+    if (this.canJump()) {
+      this.jump();
+      if (!this.isSwimmingSoundPlaying) {
         this.swimming_sound.play();
-        this.timeToGoSleep = 0;
+        this.isSwimmingSoundPlaying = true;
+      }
+
+      // this.swimming_sound.play();
     }
-    
-    /**
-    * This funciton executes the moveLeft function from its super-class, plays the correct sound for the action, flips the image of the character and resets the sleep-timer.
-    */
-    moveLeft(){
-        super.moveLeft();
-        this.otherDirection = true;
-        this.swimming_sound.play();
-        this.timeToGoSleep = 0;
+    if (!this.canMoveRight() && !this.canMoveLeft() && this.y >= 320) {
+      this.swimming_sound.pause();
+      this.isSwimmingSoundPlaying = false;
     }
-    
-    /**
-    * This function checks, if the character is able to jump
-    * 
-    * @returns {boolean} - returns 'true' if the 'jump' button (space) is pressed and the y coordiante of the character is bigger than -60
-    */
-    canJump(){
-        return this.world.keyboard.SPACE && this.y > -60;
+
+    this.world.camera_x = -this.x + 100;
+  }
+
+  /**
+   * This function checks, if the character is able to move right
+   *
+   *  @returns {boolean} - Returns `true` if the character is allowed to move right; otherwise, returns `false`.
+   */
+  canMoveRight() {
+    return this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x;
+  }
+
+  /**
+   * This function checks, if the character is able to move right
+   *
+   * @returns {boolean} - Returns 'true' if the character is allowed to move right; otherwise, returns 'false'.
+   */
+  canMoveLeft() {
+    return this.world.keyboard.LEFT && this.x > 0;
+  }
+
+  /**
+   * This function executes the moveRight function from its super-class, plays the correct sound for the action and resets the sleep-timer.
+   */
+  moveRight() {
+    super.moveRight();
+    this.otherDirection = false;
+    if (!this.isSwimmingSoundPlaying) {
+      this.swimming_sound.play();
+      this.isSwimmingSoundPlaying = true;
     }
-    
-    /**
-    * this function determines what the character does right now and which pictures have to be played in the given situation
-    */
-    playCharacter() {
-        this.timeToGoSleep = (this.isHurt() || this.isAboveGround() || this.hasDied()) ? 0 : this.timeToGoSleep + 1;
-        this.sharkySleepingSound.pause();
-        if (this.hasDied()) this.playAnimation(this.IMAGES_DEAD);
-        else if (this.isHurt() && !this.attackIsDone) this.playAnimation(this.IMAGES_HURT);
-        else if (this.isAboveGround() && !this.attackIsDone) this.playAnimation(this.IMAGES_JUMPING);
-        else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-            this.playAnimation(this.IMAGES_SWIMMING);
-            this.timeToGoSleep = 0;
-        } else if (this.timeToGoSleep >= 25) {
-            this.playAnimation(this.IMAGES_SLEEPING);
-            if (this.timeToGoSleep) this.sharkySleepingSound.play();
-        } else this.playAnimation(this.IMAGES_DOES_NOTHING);
-        this.playAttack();
+    this.timeToGoSleep = 0;
+  }
+
+  /**
+   * This funciton executes the moveLeft function from its super-class, plays the correct sound for the action, flips the image of the character and resets the sleep-timer.
+   */
+  moveLeft() {
+    super.moveLeft();
+    this.otherDirection = true;
+    if (!this.isSwimmingSoundPlaying) {
+      this.swimming_sound.play();
+      this.isSwimmingSoundPlaying = true;
     }
-    
-    /**
-    * this function checks, if the character can AND wants to attack and plays the correct pictures of the attack-animation if needed
-    */
-    playAttack(){
-        if(this.world.keyboard.V && !this.attackIsDone && !this.isHurt() &&!this.hasDied()){
-            this.playAnimation(this.IMAGES_ATTACK);
-        }
+    this.timeToGoSleep = 0;
+  }
+
+  /**
+   * This function checks, if the character is able to jump
+   *
+   * @returns {boolean} - returns 'true' if the 'jump' button (space) is pressed and the y coordiante of the character is bigger than -60
+   */
+  canJump() {
+    return this.world.keyboard.SPACE && this.y > -60;
+  }
+
+  /**
+   * this function determines what the character does right now and which pictures have to be played in the given situation
+   */
+  playCharacter() {
+    this.timeToGoSleep =
+      this.isHurt() || this.isAboveGround() || this.hasDied()
+        ? 0
+        : this.timeToGoSleep + 1;
+    this.sharkySleepingSound.pause();
+    if (this.hasDied()) this.playAnimation(this.IMAGES_DEAD);
+    else if (this.isHurt() && !this.attackIsDone)
+      this.playAnimation(this.IMAGES_HURT);
+    else if (this.isAboveGround() && !this.attackIsDone)
+      this.playAnimation(this.IMAGES_JUMPING);
+    else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+      this.playAnimation(this.IMAGES_SWIMMING);
+      this.timeToGoSleep = 0;
+    } else if (this.timeToGoSleep >= 25) {
+      this.playAnimation(this.IMAGES_SLEEPING);
+      if (this.timeToGoSleep) this.sharkySleepingSound.play();
+    } else this.playAnimation(this.IMAGES_DOES_NOTHING);
+    this.playAttack();
+  }
+
+  /**
+   * this function checks, if the character can AND wants to attack and plays the correct pictures of the attack-animation if needed
+   */
+  playAttack() {
+    if (
+      this.world.keyboard.V &&
+      !this.attackIsDone &&
+      !this.isHurt() &&
+      !this.hasDied()
+    ) {
+      this.playAnimation(this.IMAGES_ATTACK);
     }
-    
-    
+  }
 }
